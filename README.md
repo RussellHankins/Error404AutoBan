@@ -7,12 +7,15 @@ You can change the list of what causes the ban to happen at the top of http-erro
 
 The http-errors/404.php page looks like a Microsoft IIS error page. But I am running NGINX web server.
 
-To make 404 errors redirect to http-errors/404.php, add these lines in your .conf file if you are using NGINX:
-    recursive_error_pages off;
-    error_page 404 = /http-errors/404.php;
+To make 404 errors redirect to http-errors/404.php, add these lines in your .conf file in /etc/nginx/site-available if you are using NGINX:
+
+recursive_error_pages off;
+
+error_page 404 = /http-errors/404.php;
     
 In order for php to ban an IP using the program iptables, php must be allowed to run iptables as sudo.
 To give php access to run iptables as sudo, create a file called /etc/sudoers.d/www-data-sudoers and put this line in it:
+
 www-data ALL=(ALL) NOPASSWD: /sbin/iptables
 
 Some people say that php should not have access to run iptables as sudo. If  you feel that way, you could write the IP address to a file and have some other program read the file and ban them. But whatever you do, you need some fast way to ban that IP from your entire server. Because one second after they try this failed attempt at hacking in, they'll be trying 50 other things automatically. This eliminates unnecessary traffic on your server. These people write programs that automatically try every vulnerability they can think of. If there was a new vulnerability that was just discovered that they know about, but you don't, they'll get in. Unless you ban their IP when they first tried to get in.

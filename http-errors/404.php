@@ -1,4 +1,13 @@
 <?php
+
+// If the url they are going to ($_SERVER['REQUEST_URI']) contains any of these phrases, ban them.
+$evil_spots = array('phpmyadmin','/scripts/setup.php','phpMyAdmin','w00tw00t','config.inc','admin','dbadmin','cgi-bin','wp-admin','wp-content','wp-login');
+
+// If the user agent string ($_SERVER['HTTP_USER_AGENT']) contains any of these phrases, ban them.
+$bad_user_agents = array(
+'zgrab','Wget','sysscan','masscan','python','Scanbot','Auto Spider','libwww-perl','Python','curl');
+
+
 header('HTTP/1.1 404 Not Found');
 // This looks line an IIS 404 error. I don't want them to know I'm using nginx. They might try IIS exploits.
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
@@ -101,7 +110,6 @@ table tr.alt td,table tr.alt th{}
 </html><?php
 // If they are trying to browse to vulnerabilities in wordpressor phpmyadmin, they're a hacker. Ban them.
 $uri = $_SERVER['REQUEST_URI'];
-$evil_spots = array('phpmyadmin','/scripts/setup.php','phpMyAdmin','w00tw00t','config.inc','admin','dbadmin','cgi-bin','wp-admin','wp-content','wp-login');
 $should_ban = false;
 foreach($evil_spots as $evil_spot) {
   if (strpos($uri,$evil_spot)!==FALSE) {
@@ -111,8 +119,6 @@ foreach($evil_spots as $evil_spot) {
 }
 // Ban users that have certain hacker words in their user agent string.
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
-$bad_user_agents = array(
-'zgrab','Wget','sysscan','masscan','python','Scanbot','Auto Spider','libwww-perl','Python','curl');
 foreach($bad_user_agents as $bad_user_agent)
 {
 	if (strpos($user_agent,$bad_user_agent)!==FALSE) {
